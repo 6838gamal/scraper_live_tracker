@@ -1,51 +1,162 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <title>Mostaql Live Monitor</title>
 
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600&display=swap" rel="stylesheet">
+
     <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
+        }
+
         body {
-            font-family: Arial;
-            background: #0f172a;
-            color: white;
+            margin: 0;
+            background: linear-gradient(135deg, #0f172a, #020617);
+            color: #e2e8f0;
             padding: 20px;
         }
 
-        .card {
-            background: #1e293b;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 10px;
-        }
-
-        a {
+        h2 {
+            text-align: center;
+            margin-bottom: 30px;
             color: #38bdf8;
-            text-decoration: none;
         }
 
-        .time {
+        .container {
+            max-width: 900px;
+            margin: auto;
+        }
+
+        .card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: 0.3s;
+            position: relative;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+        }
+
+        .title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #f8fafc;
+            margin-bottom: 10px;
+        }
+
+        .brief {
+            font-size: 14px;
+            color: #cbd5f5;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .meta {
             font-size: 12px;
             color: #94a3b8;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
         }
+
+        .actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 6px 12px;
+            background: #38bdf8;
+            color: #020617;
+            border-radius: 8px;
+            font-size: 13px;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+
+        .btn:hover {
+            background: #0ea5e9;
+        }
+
+        .badge {
+            background: #22c55e;
+            color: #022c22;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+        }
+
     </style>
 </head>
 
 <body>
 
-<h2>🚀 المشاريع الحية من مستقل</h2>
+<div class="container">
 
-{% for p in projects %}
-<div class="card">
-    <h3>{{ p.title }}</h3>
+    <h2>🚀 المشاريع الحية من مستقل</h2>
 
-    <p>{{ p.brief }}</p>
+    {% for p in projects %}
+    <div class="card"
+         data-title="{{ p.title }}"
+         data-brief="{{ p.brief }}"
+         data-time="{{ p.time }}"
+         data-timestamp="{{ p.timestamp }}"
+         data-link="{{ p.link }}">
 
-    <p class="time">{{ p.time }} | {{ p.timestamp }}</p>
+        <div class="title">{{ p.title }}</div>
 
-    <a href="{{ p.link }}" target="_blank">فتح المشروع</a>
+        <div class="brief">
+            {{ p.brief }}
+        </div>
+
+        <div class="meta">
+            <span>🕒 {{ p.time }}</span>
+            <span>{{ p.timestamp }}</span>
+        </div>
+
+        <div class="actions">
+            <span class="badge">جديد</span>
+            <a class="btn" href="{{ p.link }}" target="_blank">فتح المشروع</a>
+        </div>
+
+    </div>
+    {% endfor %}
+
 </div>
-{% endfor %}
+
+<!-- JS جاهز لسحب البيانات كـ JSON -->
+<script>
+    function exportProjectsToJSON() {
+        const cards = document.querySelectorAll('.card');
+        let data = [];
+
+        cards.forEach(card => {
+            data.push({
+                title: card.dataset.title,
+                brief: card.dataset.brief,
+                time: card.dataset.time,
+                timestamp: card.dataset.timestamp,
+                link: card.dataset.link
+            });
+        });
+
+        return JSON.stringify(data, null, 2);
+    }
+
+    // للاختبار في الكونسول:
+    // console.log(exportProjectsToJSON());
+</script>
 
 </body>
 </html>
