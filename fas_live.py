@@ -4,11 +4,10 @@ import time
 import json
 import threading
 from datetime import datetime
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from fastapi import Request
 
 BASE_URL = "https://mostaql.com"
 
@@ -91,7 +90,7 @@ def monitor():
             if project and project["id"] not in seen:
                 print("🆕 New:", project["title"])
 
-                data.insert(0, project)  # أحدث في الأعلى
+                data.insert(0, project)
                 save_data(data)
 
                 seen.add(project["id"])
@@ -104,15 +103,18 @@ def monitor():
 
 
 # =========================
-# API - عرض البيانات
+# API - عرض البيانات (UPDATED)
 # =========================
 @app.get("/", response_class=HTMLResponse)
 def home(request: Request):
     data = load_data()
-    return templates.TemplateResponse("index.html", {
-        "request": request,
-        "projects": data[:50]
-    })
+    return templates.TemplateResponse(
+        request=request,
+        name="index.html",
+        context={
+            "projects": data[:50]
+        }
+    )
 
 
 # =========================
