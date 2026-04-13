@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <title>Mostaql Live Monitor</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            background: #0f172a;
+            color: white;
+            padding: 20px;
+        }
+
+        .card {
+            background: #1e293b;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+        }
+
+        a {
+            color: #38bdf8;
+            text-decoration: none;
+        }
+
+        .time {
+            font-size: 12px;
+            color: #94a3b8;
+        }
+    </style>
+</head>
+
+<body>
+
+<h2>🚀 المشاريع الحية من مستقل</h2>
+
+{% for p in projects %}
+<div class="card">
+    <h3>{{ p.title }}</h3>
+
+    <p>{{ p.brief }}</p>
+
+    <p class="time">{{ p.time }} | {{ p.timestamp }}</p>
+
+    <a href="{{ p.link }}" target="_blank">فتح المشروع</a>
+</div>
+{% endfor %}
+
+</body>
+</html>
