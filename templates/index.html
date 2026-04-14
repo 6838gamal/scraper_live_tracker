@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <title>Mostaql Live Monitor</title>
 
-    <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600&display=swap" rel="stylesheet">
 
     <style>
@@ -27,19 +26,18 @@
         }
 
         .container {
-            max-width: 900px;
+            max-width: 1000px;
             margin: auto;
         }
 
         .card {
-            background: rgba(30, 41, 59, 0.7);
-            backdrop-filter: blur(10px);
+            background: rgba(30, 41, 59, 0.75);
+            backdrop-filter: blur(12px);
             border: 1px solid rgba(148, 163, 184, 0.1);
             border-radius: 16px;
             padding: 20px;
             margin-bottom: 15px;
             transition: 0.3s;
-            position: relative;
         }
 
         .card:hover {
@@ -54,25 +52,48 @@
             margin-bottom: 10px;
         }
 
-        .brief {
-            font-size: 14px;
-            color: #cbd5f5;
-            margin-bottom: 15px;
-            line-height: 1.6;
-        }
-
         .meta {
-            font-size: 12px;
-            color: #94a3b8;
             display: flex;
             justify-content: space-between;
+            font-size: 12px;
+            color: #94a3b8;
             margin-bottom: 10px;
+        }
+
+        .section {
+            margin-top: 10px;
+            font-size: 13px;
+            line-height: 1.6;
+            color: #cbd5e1;
+        }
+
+        .skills {
+            margin-top: 10px;
+        }
+
+        .skill {
+            display: inline-block;
+            background: #0ea5e9;
+            color: #021024;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            margin: 3px;
+        }
+
+        .client-box {
+            margin-top: 10px;
+            font-size: 12px;
+            color: #94a3b8;
+            background: rgba(15, 23, 42, 0.5);
+            padding: 10px;
+            border-radius: 10px;
         }
 
         .actions {
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            margin-top: 15px;
         }
 
         .btn {
@@ -82,7 +103,6 @@
             border-radius: 8px;
             font-size: 13px;
             text-decoration: none;
-            transition: 0.2s;
         }
 
         .btn:hover {
@@ -97,6 +117,14 @@
             font-size: 11px;
         }
 
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            font-size: 12px;
+            color: #94a3b8;
+        }
+
     </style>
 </head>
 
@@ -109,25 +137,51 @@
     {% for p in projects %}
     <div class="card"
          data-title="{{ p.title }}"
-         data-brief="{{ p.brief }}"
-         data-time="{{ p.time }}"
-         data-timestamp="{{ p.timestamp }}"
-         data-link="{{ p.link }}">
+         data-link="{{ p.url }}"
+         data-budget="{{ p.budget }}"
+         data-status="{{ p.status }}"
+         data-duration="{{ p.duration }}"
+         data-skills='{{ p.skills | tojson }}'
+         data-client='{{ p.client | tojson }}'
+         data-details="{{ p.details }}">
 
+        <!-- العنوان -->
         <div class="title">{{ p.title }}</div>
 
-        <div class="brief">
-            {{ p.brief }}
-        </div>
-
+        <!-- الحالة + الميزانية -->
         <div class="meta">
-            <span>🕒 {{ p.time }}</span>
-            <span>{{ p.timestamp }}</span>
+            <span>📌 {{ p.status }}</span>
+            <span>💰 {{ p.budget }}</span>
         </div>
 
+        <!-- التفاصيل -->
+        <div class="section">
+            {{ p.details[:250] }}...
+        </div>
+
+        <!-- المهارات -->
+        <div class="skills">
+            {% for s in p.skills %}
+                <span class="skill">{{ s }}</span>
+            {% endfor %}
+        </div>
+
+        <!-- بيانات إضافية -->
+        <div class="grid">
+            <div>⏱ المدة: {{ p.duration }}</div>
+            <div>🕒 {{ p.publish_date }}</div>
+        </div>
+
+        <!-- العميل -->
+        <div class="client-box">
+            👤 {{ p.client.name }} - {{ p.client.job }} <br>
+            📊 توظيف: {{ p.client.hire_rate }}
+        </div>
+
+        <!-- أزرار -->
         <div class="actions">
-            <span class="badge">جديد</span>
-            <a class="btn" href="{{ p.link }}" target="_blank">فتح المشروع</a>
+            <span class="badge">Live</span>
+            <a class="btn" href="{{ p.url }}" target="_blank">فتح المشروع</a>
         </div>
 
     </div>
@@ -135,27 +189,29 @@
 
 </div>
 
-<!-- JS جاهز لسحب البيانات كـ JSON -->
+<!-- JSON Export كامل -->
 <script>
-    function exportProjectsToJSON() {
-        const cards = document.querySelectorAll('.card');
-        let data = [];
+function exportFullData() {
+    const cards = document.querySelectorAll('.card');
+    let data = [];
 
-        cards.forEach(card => {
-            data.push({
-                title: card.dataset.title,
-                brief: card.dataset.brief,
-                time: card.dataset.time,
-                timestamp: card.dataset.timestamp,
-                link: card.dataset.link
-            });
+    cards.forEach(card => {
+        data.push({
+            title: card.dataset.title,
+            link: card.dataset.link,
+            budget: card.dataset.budget,
+            status: card.dataset.status,
+            duration: card.dataset.duration,
+            skills: JSON.parse(card.dataset.skills || "[]"),
+            client: JSON.parse(card.dataset.client || "{}"),
+            details: card.dataset.details
         });
+    });
 
-        return JSON.stringify(data, null, 2);
-    }
+    return JSON.stringify(data, null, 2);
+}
 
-    // للاختبار في الكونسول:
-    // console.log(exportProjectsToJSON());
+// console.log(exportFullData());
 </script>
 
 </body>
